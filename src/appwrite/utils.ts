@@ -1,4 +1,4 @@
-import { ID, Models } from 'appwrite';
+import { ID, type Models } from 'appwrite';
 import { databases } from './config';
 
 /**

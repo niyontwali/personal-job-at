@@ -1,4 +1,3 @@
-// hooks/useApplications.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AppwriteService } from '@/appwrite/utils';
 import { DATABASES, COLLECTIONS } from '@/appwrite/config';
@@ -97,7 +96,6 @@ export const useApplicationStats = () => {
   return {
     total: applications?.total || 0,
     applied: applications?.data.filter(app => app.status === 'applied').length || 0,
-    inReview: applications?.data.filter(app => app.status === 'in_review').length || 0,
     interview: applications?.data.filter(app => app.status === 'interview').length || 0,
     offers: applications?.data.filter(app => app.status === 'offer').length || 0,
     rejected: applications?.data.filter(app => app.status === 'rejected').length || 0,
