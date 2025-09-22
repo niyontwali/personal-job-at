@@ -27,11 +27,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Dialog,
   DialogContent,
@@ -271,12 +267,12 @@ const Applications = () => {
   }
 
   return (
-    <div className='p-6 space-y-6'>
+    <div className='py-4 px-10 space-y-6'>
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3'>
           <div className='p-2 bg-primary/10 rounded-lg'>
-            <Briefcase className='w-6 h-6 text-primary' />
+            <Briefcase className='w-4 h-4 text-primary' />
           </div>
           <div>
             <h1 className='text-2xl font-bold text-gray-900'>Applied Jobs</h1>
@@ -319,12 +315,12 @@ const Applications = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4'>
-        <Card className='shadow-none border'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2'>
+        <Card className='shadow-none border p-3'>
           <CardContent className='flex items-center'>
             <div className='flex items-center space-x-4'>
               <div className='p-3 bg-blue-100 rounded-full'>
-                <Users className='w-6 h-6 text-blue-600' />
+                <Users className='w-4 h-4 text-blue-600' />
               </div>
               <div>
                 <div className='text-2xl font-bold text-blue-600'>{stats.total}</div>
@@ -333,11 +329,11 @@ const Applications = () => {
             </div>
           </CardContent>
         </Card>
-        <Card className='shadow-none border'>
+        <Card className='shadow-none border p-3'>
           <CardContent className='flex items-center'>
             <div className='flex items-center space-x-4'>
               <div className='p-3 bg-orange-100 rounded-full'>
-                <Clock className='w-6 h-6 text-orange-600' />
+                <Clock className='w-4 h-4 text-orange-600' />
               </div>
               <div>
                 <div className='text-2xl font-bold text-orange-600'>{stats.applied}</div>
@@ -346,11 +342,11 @@ const Applications = () => {
             </div>
           </CardContent>
         </Card>
-        <Card className='shadow-none border'>
+        <Card className='shadow-none border p-3'>
           <CardContent className='flex items-center'>
             <div className='flex items-center space-x-4'>
               <div className='p-3 bg-purple-100 rounded-full'>
-                <MessageCircle className='w-6 h-6 text-purple-600' />
+                <MessageCircle className='w-4 h-4 text-purple-600' />
               </div>
               <div>
                 <div className='text-2xl font-bold text-purple-600'>{stats.interview}</div>
@@ -359,11 +355,11 @@ const Applications = () => {
             </div>
           </CardContent>
         </Card>
-        <Card className='shadow-none border'>
+        <Card className='shadow-none border p-3'>
           <CardContent className='flex items-center'>
             <div className='flex items-center space-x-4'>
               <div className='p-3 bg-green-100 rounded-full'>
-                <CheckCircle className='w-6 h-6 text-green-600' />
+                <CheckCircle className='w-4 h-4 text-green-600' />
               </div>
               <div>
                 <div className='text-2xl font-bold text-green-600'>{stats.offer}</div>
@@ -372,11 +368,11 @@ const Applications = () => {
             </div>
           </CardContent>
         </Card>
-        <Card className='shadow-none border'>
+        <Card className='shadow-none border p-3'>
           <CardContent className='flex items-center'>
             <div className='flex items-center space-x-4'>
               <div className='p-3 bg-red-100 rounded-full'>
-                <XCircle className='w-6 h-6 text-red-600' />
+                <XCircle className='w-4 h-4 text-red-600' />
               </div>
               <div>
                 <div className='text-2xl font-bold text-red-600'>{stats.rejected}</div>
@@ -388,8 +384,8 @@ const Applications = () => {
       </div>
 
       {/* Controls */}
-      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
-        <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1'>
+      <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2'>
+        <div className='flex flex-col sm:flex-row items-start sm:items-center gap-2 flex-1'>
           {/* Status Tabs */}
           <Tabs value={selectedStatus}>
             <TabsList className='grid w-full grid-cols-4 lg:w-auto lg:grid-cols-4'>
@@ -494,8 +490,8 @@ const Applications = () => {
             searchQuery
               ? `No applications found matching "${searchQuery}". Try adjusting your search terms.`
               : applicationsData?.data?.length === 0
-                ? 'No applications found. Start by adding your first job application!'
-                : `No ${selectedStatus === 'all' ? '' : selectedStatus} applications found.`
+              ? 'No applications found. Start by adding your first job application!'
+              : `No ${selectedStatus === 'all' ? '' : selectedStatus} applications found.`
           }
         />
       ) : (
@@ -771,8 +767,9 @@ const Applications = () => {
                     <SelectItem key={status.value} value={status.value}>
                       <div className='flex items-center gap-2'>
                         <div
-                          className={`w-2 h-2 rounded-full ${status.color.includes('bg-') ? status.color : 'bg-gray-400'
-                            }`}
+                          className={`w-2 h-2 rounded-full ${
+                            status.color.includes('bg-') ? status.color : 'bg-gray-400'
+                          }`}
                         />
                         {status.label}
                       </div>

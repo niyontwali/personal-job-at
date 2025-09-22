@@ -66,20 +66,20 @@ const ApplicationDetailsPage: React.FC<ApplicationDetailsPageProps> = ({ onBack 
   };
 
   const LoadingSkeleton = () => (
-    <div className='space-y-6'>
+    <div className='space-y-3'>
       <div className='animate-pulse'>
         {/* Header skeleton */}
         <div className='mb-6'>
           <div className='h-8 bg-gray-200 rounded w-1/2 mb-2'></div>
           <div className='h-6 bg-gray-200 rounded w-1/3 mb-3'></div>
-          <div className='flex gap-4 mb-2'>
+          <div className='flex gap-2 mb-2'>
             <div className='h-4 bg-gray-200 rounded w-32'></div>
             <div className='h-4 bg-gray-200 rounded w-28'></div>
           </div>
         </div>
 
         {/* Quick info grid skeleton */}
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mb-6'>
           {[...Array(3)].map((_, i) => (
             <div key={i} className='bg-white p-4 rounded-lg border'>
               <div className='h-4 bg-gray-200 rounded w-20 mb-2'></div>
@@ -168,7 +168,7 @@ const ApplicationDetailsPage: React.FC<ApplicationDetailsPageProps> = ({ onBack 
         <div className='max-w-5xl mx-auto py-6 px-6'>
           <button
             onClick={handleBack}
-            className='flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors'
+            className='flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors cursor-pointer'
           >
             <ArrowLeft className='w-4 h-4' />
             Back to Applications
@@ -188,7 +188,7 @@ const ApplicationDetailsPage: React.FC<ApplicationDetailsPageProps> = ({ onBack 
       <div className='max-w-5xl mx-auto py-6 px-6'>
         <button
           onClick={handleBack}
-          className='flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors'
+          className='flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors cursor-pointer'
         >
           <ArrowLeft className='w-4 h-4' />
           Back to Applications
@@ -211,13 +211,13 @@ const ApplicationDetailsPage: React.FC<ApplicationDetailsPageProps> = ({ onBack 
             <LoadingSkeleton />
           </div>
         ) : application ? (
-          <div className='space-y-6'>
+          <div className='space-y-3'>
             {/* Header Section */}
             <div className='flex items-start justify-between mb-6'>
               <div>
                 <h1 className='text-2xl font-bold text-gray-900 mb-1'>{application.companyName}</h1>
                 <p className='text-lg text-gray-600 mb-3'>{application.positionTitle}</p>
-                <div className='flex items-center gap-4 text-sm text-gray-600'>
+                <div className='flex items-center gap-2 text-sm text-gray-600'>
                   <span className='flex items-center gap-1'>
                     <Calendar className='w-4 h-4' />
                     Applied {formatDateWithOrdinal(application.applicationDate)}
@@ -234,7 +234,7 @@ const ApplicationDetailsPage: React.FC<ApplicationDetailsPageProps> = ({ onBack 
             </div>
 
             {/* Quick Info Grid - Short fields only */}
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-2'>
               {application.source && (
                 <div className='bg-white p-4 rounded-lg border'>
                   <div className='flex items-center gap-2 mb-1'>
@@ -338,17 +338,6 @@ const ApplicationDetailsPage: React.FC<ApplicationDetailsPageProps> = ({ onBack 
                 </div>
               </div>
             )}
-
-            {/* Footer */}
-            <div className='pt-4 border-t'>
-              <button
-                onClick={handleBack}
-                className='flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors'
-              >
-                <ArrowLeft className='w-4 h-4' />
-                Back
-              </button>
-            </div>
           </div>
         ) : (
           <Error description='The application loaded successfully but contains no data.' />
