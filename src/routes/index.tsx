@@ -5,7 +5,8 @@ import ProtectedRoute, { PublicOnlyRoute } from '@/authGuard';
 import LoginPage from '@/pages/auth/Login';
 
 // Dashboard pages
-import DashboardPage from '@/pages/dashboard/Dashboard';
+import ApplicationsPage from '@/pages/dashboard/Applications';
+import ViewApplicationsPage from '@/pages/dashboard/ViewApplications';
 import AccountSettingsPage from '@/pages/dashboard/AccountSettings';
 
 // Error pages
@@ -18,12 +19,13 @@ const routes: RouteObject[] = [
     children: [{ path: '', element: <LoginPage /> }],
   },
 
-  // Protected dashboard routes
+  // Protected applications routes
   {
-    path: '/dashboard',
+    path: '/applications',
     element: <ProtectedRoute />,
     children: [
-      { path: '', element: <DashboardPage /> },
+      { path: '', element: <ApplicationsPage /> },
+      { path: 'view/:id', element: <ViewApplicationsPage /> },
       { path: 'account-settings', element: <AccountSettingsPage /> },
     ],
   },

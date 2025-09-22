@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProtectedRouteProps {
   redirectPath?: string;
@@ -31,7 +31,7 @@ export default function ProtectedRoute({ redirectPath = '/' }: ProtectedRoutePro
   return <Outlet />;
 }
 
-export function PublicOnlyRoute({ redirectPath = '/dashboard' }: ProtectedRouteProps) {
+export function PublicOnlyRoute({ redirectPath = '/applications' }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 

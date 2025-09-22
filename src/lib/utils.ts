@@ -63,11 +63,12 @@ export const handleError = (error: unknown) => {
   });
 };
 
+// Updated to match the database schema exactly
 export const applicationStatus: { value: ApplicationStatus; label: string; color: string }[] = [
   { value: 'applied', label: 'Applied', color: 'bg-blue-100 text-blue-800' },
-  { value: 'in_review', label: 'In Review', color: 'bg-yellow-100 text-yellow-800' },
-  { value: 'interview', label: 'Interview', color: 'bg-purple-100 text-purple-800' },
+  { value: 'interview', label: 'Interview', color: 'bg-orange-100 text-orange-800' },
   { value: 'offer', label: 'Offer', color: 'bg-green-100 text-green-800' },
   { value: 'rejected', label: 'Rejected', color: 'bg-red-100 text-red-800' },
   { value: 'withdrawn', label: 'Withdrawn', color: 'bg-gray-100 text-gray-800' },
+  { value: 'closed', label: 'Closed', color: 'bg-purple-100 text-purple-800' },
 ];

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { handleError } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LoginFormInputs {
   email: string;
@@ -30,7 +30,7 @@ const LoginPage = () => {
       const session = await login(data.email, data.password);
 
       if (session) {
-        navigate('/dashboard');
+        navigate('/applications');
       } else {
         toast.error('Invalid credentials. Please try again.');
       }

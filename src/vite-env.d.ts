@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 // types/application.ts
-type ApplicationStatus = 'applied' | 'in_review' | 'interview' | 'offer' | 'rejected' | 'withdrawn';
+type ApplicationStatus = 'applied' | 'interview' | 'offer' | 'rejected' | 'withdrawn' | 'closed';
 
 interface Application {
   $id: string;
@@ -14,6 +14,8 @@ interface Application {
   jobLink?: string;
   location: string;
   source: string;
+  description: string;
+  stacks: string;
   notes?: string;
   nextStep?: string;
   resumeVersion?: string;
@@ -27,6 +29,8 @@ interface ApplicationFormData {
   jobLink?: string;
   location: string;
   source: string;
+  description: string;
+  stacks: string;
   notes?: string;
   nextStep?: string;
   resumeVersion?: string;
