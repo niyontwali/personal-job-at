@@ -126,7 +126,7 @@ const LoginPage = () => {
               isLoading={isAuthenticating}
               loadingText='Signing you in...'
             >
-              Access Dashboard
+              Access Applications
             </Button>
           </form>
         </div>
