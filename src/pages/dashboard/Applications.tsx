@@ -28,6 +28,11 @@ import {
   DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -489,8 +494,8 @@ const Applications = () => {
             searchQuery
               ? `No applications found matching "${searchQuery}". Try adjusting your search terms.`
               : applicationsData?.data?.length === 0
-              ? 'No applications found. Start by adding your first job application!'
-              : `No ${selectedStatus === 'all' ? '' : selectedStatus} applications found.`
+                ? 'No applications found. Start by adding your first job application!'
+                : `No ${selectedStatus === 'all' ? '' : selectedStatus} applications found.`
           }
         />
       ) : (
@@ -525,11 +530,45 @@ const Applications = () => {
                       <TableCell>
                         <div className='flex flex-wrap gap-1 max-w-[160px]'>
                           {application.stacks ? (
-                            application.stacks.split(',').map((stack, index) => (
-                              <Badge key={index} variant='outline' className='text-xs px-2 py-0.5'>
-                                {stack.trim()}
-                              </Badge>
-                            ))
+                            (() => {
+                              const stacks = application.stacks.split(',').map(stack => stack.trim());
+                              const visibleStacks = stacks.slice(0, 2);
+                              const remainingStacks = stacks.slice(2);
+
+                              return (
+                                <>
+                                  {visibleStacks.map((stack, index) => (
+                                    <Badge key={index} variant='outline' className='text-xs px-2 py-0.5'>
+                                      {stack}
+                                    </Badge>
+                                  ))}
+                                  {remainingStacks.length > 0 && (
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <Badge
+                                          variant='secondary'
+                                          className='text-xs px-2 py-0.5 cursor-pointer bg-black hover:bg-black/90 transition-colors text-white'
+                                        >
+                                          +{remainingStacks.length} more
+                                        </Badge>
+                                      </PopoverTrigger>
+                                      <PopoverContent className='w-80 p-3' align='start'>
+                                        <div className='space-y-2'>
+                                          <h4 className='font-medium text-sm'>All Tech Stacks</h4>
+                                          <div className='flex flex-wrap gap-1'>
+                                            {stacks.map((stack, index) => (
+                                              <Badge key={index} variant='outline' className='text-xs px-2 py-0.5'>
+                                                {stack}
+                                              </Badge>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      </PopoverContent>
+                                    </Popover>
+                                  )}
+                                </>
+                              );
+                            })()
                           ) : (
                             <span className='text-xs text-muted-foreground'>Not specified</span>
                           )}
@@ -732,9 +771,8 @@ const Applications = () => {
                     <SelectItem key={status.value} value={status.value}>
                       <div className='flex items-center gap-2'>
                         <div
-                          className={`w-2 h-2 rounded-full ${
-                            status.color.includes('bg-') ? status.color : 'bg-gray-400'
-                          }`}
+                          className={`w-2 h-2 rounded-full ${status.color.includes('bg-') ? status.color : 'bg-gray-400'
+                            }`}
                         />
                         {status.label}
                       </div>
