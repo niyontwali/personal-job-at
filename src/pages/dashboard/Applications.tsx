@@ -235,7 +235,7 @@ const Applications = () => {
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3'>
           <div className='p-2 bg-primary/10 rounded-lg'>
-            <Briefcase className='w-4 h-4 text-primary' />
+            <Briefcase className='w-6 h-6 text-primary' />
           </div>
           <div>
             <h1 className='text-2xl font-bold text-gray-900'>Applied Jobs</h1>
