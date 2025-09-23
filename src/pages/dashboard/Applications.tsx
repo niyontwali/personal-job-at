@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Search,
   Plus,
@@ -51,7 +51,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import ApplicationFormModal from '@/components/ApplicationFormModal';
-import ConfirmationModal from '@/components/ConfirmationModal';
 import ProfileSheet from '@/components/ProfileSheet';
 import Empty from '@/components/Empty';
 import Error from '@/components/Error';
@@ -60,25 +59,18 @@ import {
   useGetApplicationsQuery,
   useDeleteApplicationMutation,
   useUpdateApplicationMutation,
+  useApplicationStats,
 } from '@/hooks/useApplications';
 import { useAuth } from '@/contexts/AuthContext';
 import { applicationStatus } from '@/lib/utils';
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const Applications = () => {
   const { user, logout } = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Get URL parameters
-  const statusFromUrl = searchParams.get('status') || 'all';
-  const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
-
-  const [selectedStatus, setSelectedStatus] = useState<ApplicationStatus | 'all'>(
-    statusFromUrl as ApplicationStatus | 'all'
-  );
-  const [currentPage, setCurrentPage] = useState(pageFromUrl);
+  const [selectedStatus, setSelectedStatus] = useState<ApplicationStatus | 'all'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -87,6 +79,7 @@ const Applications = () => {
   const [statusUpdateApplication, setStatusUpdateApplication] = useState<Application | null>(null);
   const [newStatus, setNewStatus] = useState<ApplicationStatus>('applied');
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [isDeletingApplication, setIsDeletingApplication] = useState(false);
 
   // navigation
   const navigate = useNavigate();
@@ -94,42 +87,23 @@ const Applications = () => {
   // Profile sheet state
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
 
-  // Fetch all applications (no status filtering in API)
-  const { data: applicationsData, isLoading, error } = useGetApplicationsQuery();
+  // Fetch applications with status filter (server-side filtering)
+  const statusForQuery = selectedStatus === 'all' ? undefined : selectedStatus;
+  const { data: applicationsData, isLoading, error } = useGetApplicationsQuery(statusForQuery);
+
+  // Get stats using the dedicated hook
+  const stats = useApplicationStats();
+
   const deleteMutation = useDeleteApplicationMutation();
   const updateMutation = useUpdateApplicationMutation();
 
-  // Update URL when status or page changes
-  useEffect(() => {
-    const newSearchParams = new URLSearchParams(searchParams);
-
-    if (selectedStatus !== 'all') {
-      newSearchParams.set('status', selectedStatus);
-    } else {
-      newSearchParams.delete('status');
-    }
-
-    if (currentPage !== 1) {
-      newSearchParams.set('page', currentPage.toString());
-    } else {
-      newSearchParams.delete('page');
-    }
-
-    setSearchParams(newSearchParams, { replace: true });
-  }, [selectedStatus, currentPage, setSearchParams, searchParams]);
-
-  // Filter applications by status and search query locally
+  // Filter applications by search query only (status filtering is now server-side)
   const filteredApplications = useMemo(() => {
     if (!applicationsData?.data) return [];
 
     let filtered = applicationsData.data;
 
-    // Filter by status
-    if (selectedStatus !== 'all') {
-      filtered = filtered.filter(app => app.status === selectedStatus);
-    }
-
-    // Filter by search query
+    // Filter by search query only
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -142,27 +116,13 @@ const Applications = () => {
     }
 
     return filtered;
-  }, [applicationsData?.data, selectedStatus, searchQuery]);
+  }, [applicationsData?.data, searchQuery]);
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedApplications = filteredApplications.slice(startIndex, endIndex);
-
-  // Calculate stats from all applications
-  const stats = useMemo(() => {
-    if (!applicationsData?.data) return { total: 0, applied: 0, interview: 0, offer: 0, rejected: 0 };
-
-    const data = applicationsData.data;
-    return {
-      total: data.length,
-      applied: data.filter(app => app.status === 'applied').length,
-      interview: data.filter(app => app.status === 'interview').length,
-      offer: data.filter(app => app.status === 'offer').length,
-      rejected: data.filter(app => app.status === 'rejected').length,
-    };
-  }, [applicationsData?.data]);
 
   // Reset to page 1 when status or search changes
   useEffect(() => {
@@ -208,6 +168,7 @@ const Applications = () => {
   const confirmDelete = async () => {
     if (!deletingApplication) return;
 
+    setIsDeletingApplication(true);
     try {
       await deleteMutation.mutateAsync(deletingApplication.$id);
       toast.success('Application deleted successfully!');
@@ -215,6 +176,8 @@ const Applications = () => {
     } catch (error) {
       console.error('Delete error:', error);
       toast.error('Failed to delete application. Please try again.');
+    } finally {
+      setIsDeletingApplication(false);
     }
   };
 
@@ -267,7 +230,7 @@ const Applications = () => {
   }
 
   return (
-    <div className='py-4 px-10 space-y-6'>
+    <div className='py-4 px-10 space-y-6 '>
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div className='flex items-center gap-3'>
@@ -301,12 +264,12 @@ const Applications = () => {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem className='cursor-pointer' onClick={() => setIsProfileSheetOpen(true)}>
-                <User className='mr-2 h-4 w-4' />
+                <User className='h-4 w-4' />
                 <span>Profile</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className='cursor-pointer' onClick={handleLogout}>
-                <LogOut className='mr-2 h-4 w-4' />
+              <DropdownMenuItem className='cursor-pointer text-red-700!' onClick={handleLogout}>
+                <LogOut className='h-4 w-4 text-red-700!' />
                 <span>Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -362,7 +325,7 @@ const Applications = () => {
                 <CheckCircle className='w-4 h-4 text-green-600' />
               </div>
               <div>
-                <div className='text-2xl font-bold text-green-600'>{stats.offer}</div>
+                <div className='text-2xl font-bold text-green-600'>{stats.offers}</div>
                 <div className='text-sm text-muted-foreground'>Offers</div>
               </div>
             </div>
@@ -490,8 +453,8 @@ const Applications = () => {
             searchQuery
               ? `No applications found matching "${searchQuery}". Try adjusting your search terms.`
               : applicationsData?.data?.length === 0
-              ? 'No applications found. Start by adding your first job application!'
-              : `No ${selectedStatus === 'all' ? '' : selectedStatus} applications found.`
+                ? 'No applications found. Start by adding your first job application!'
+                : `No ${selectedStatus === 'all' ? '' : selectedStatus} applications found.`
           }
         />
       ) : (
@@ -733,19 +696,48 @@ const Applications = () => {
         mode='edit'
       />
 
-      <ConfirmationModal
-        isOpen={!!deletingApplication}
-        onClose={() => setDeletingApplication(null)}
-        onConfirm={confirmDelete}
-        title='Delete Application'
-        description={`Are you sure you want to delete the application for ${deletingApplication?.positionTitle} at ${deletingApplication?.companyName}? This action cannot be undone.`}
-        confirmText='Delete'
-        type='destructive'
-        isLoading={deleteMutation.isPending}
-      />
+      {/* Delete Confirmation Modal */}
+      <Dialog open={!!deletingApplication} onOpenChange={() => !isDeletingApplication && setDeletingApplication(null)}>
+        <DialogContent className='sm:max-w-md'>
+          <DialogHeader>
+            <DialogTitle>
+              Delete Application
+            </DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete the application for{' '}
+              <strong>{deletingApplication?.positionTitle}</strong> at{' '}
+              <strong>{deletingApplication?.companyName}</strong>? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button
+              variant='outline'
+              onClick={() => setDeletingApplication(null)}
+              disabled={isDeletingApplication}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmDelete}
+              disabled={isDeletingApplication}
+              className='bg-red-600 hover:bg-red-700 text-white'
+            >
+              {isDeletingApplication ? (
+                <>
+                  <RefreshCw className='w-4 h-4 animate-spin' />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Status Update Modal */}
-      <Dialog open={!!statusUpdateApplication} onOpenChange={() => setStatusUpdateApplication(null)}>
+      <Dialog open={!!statusUpdateApplication} onOpenChange={() => !isUpdatingStatus && setStatusUpdateApplication(null)}>
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
             <DialogTitle>Update Application Status</DialogTitle>
@@ -767,9 +759,8 @@ const Applications = () => {
                     <SelectItem key={status.value} value={status.value}>
                       <div className='flex items-center gap-2'>
                         <div
-                          className={`w-2 h-2 rounded-full ${
-                            status.color.includes('bg-') ? status.color : 'bg-gray-400'
-                          }`}
+                          className={`w-2 h-2 rounded-full ${status.color.includes('bg-') ? status.color : 'bg-gray-400'
+                            }`}
                         />
                         {status.label}
                       </div>
@@ -787,7 +778,7 @@ const Applications = () => {
             <Button onClick={confirmStatusUpdate} disabled={isUpdatingStatus}>
               {isUpdatingStatus ? (
                 <>
-                  <RefreshCw className='w-4 h-4 mr-2 animate-spin' />
+                  <RefreshCw className='w-4 h-4 animate-spin' />
                   Updating...
                 </>
               ) : (

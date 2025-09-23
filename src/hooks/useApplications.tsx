@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Query } from 'appwrite';
 import { AppwriteService } from '@/appwrite/utils';
 import { DATABASES, COLLECTIONS } from '@/appwrite/config';
 
@@ -6,7 +7,16 @@ export const useGetApplicationsQuery = (status?: ApplicationStatus) => {
   return useQuery({
     queryKey: ['applications', status],
     queryFn: async () => {
-      const queries = status ? [`status=${status}`] : [];
+      const queries = [];
+
+      // Add status filter if provided
+      if (status) {
+        queries.push(Query.equal('status', status));
+      }
+
+      // Always order by creation date (latest first)
+      queries.push(Query.orderDesc('$createdAt'));
+
       const response = await AppwriteService.listDocuments(DATABASES.MAIN, COLLECTIONS.APPLICATIONS, queries);
       return {
         data: response.documents as unknown as Application[],
@@ -54,7 +64,7 @@ export const useUpdateApplicationMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<ApplicationFormData> }) => {
+    mutationFn: async ({ id, data }: { id: string; data: Partial<ApplicationFormData>; }) => {
       const response = await AppwriteService.updateDocument(DATABASES.MAIN, COLLECTIONS.APPLICATIONS, id, data);
       return { ok: true, message: 'Application updated successfully', data: response };
     },
