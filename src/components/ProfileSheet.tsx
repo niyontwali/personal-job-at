@@ -146,7 +146,7 @@ const ProfileSheet = ({ isOpen, onClose }: ProfileSheetProps) => {
                 <CardContent className='space-y-6'>
                   <div className='space-y-3'>
                     <div className='flex items-center text-sm font-medium'>
-                      <Mail className='w-4 h-4' />
+                      <Mail className='w-4 h-4 mr-2' />
                       Email Address
                     </div>
                     <div className='flex items-center justify-between'>
@@ -157,7 +157,7 @@ const ProfileSheet = ({ isOpen, onClose }: ProfileSheetProps) => {
 
                   <div className='space-y-3'>
                     <div className='flex items-center text-sm font-medium'>
-                      <Phone className='w-4 h-4' />
+                      <Phone className='w-4 h-4 mr-2' />
                       Phone Number
                     </div>
                     <div className='flex items-center justify-between'>
@@ -179,7 +179,7 @@ const ProfileSheet = ({ isOpen, onClose }: ProfileSheetProps) => {
                 <CardContent className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                   <div className='space-y-2'>
                     <div className='flex items-center text-sm font-medium'>
-                      <Calendar className='w-4 h-4' />
+                      <Calendar className='w-4 h-4 mr-2' />
                       Member Since
                     </div>
                     <p className='text-sm'>
@@ -189,7 +189,7 @@ const ProfileSheet = ({ isOpen, onClose }: ProfileSheetProps) => {
 
                   <div className='space-y-2'>
                     <div className='flex items-center text-sm font-medium'>
-                      <Key className='w-4 h-4' />
+                      <Key className='w-4 h-4 mr-2' />
                       Password Updated
                     </div>
                     <p className='text-sm'>
