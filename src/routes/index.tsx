@@ -7,7 +7,6 @@ import LoginPage from '@/pages/auth/Login';
 // Dashboard pages
 import ApplicationsPage from '@/pages/dashboard/Applications';
 import ViewApplicationsPage from '@/pages/dashboard/ViewApplications';
-import AccountSettingsPage from '@/pages/dashboard/AccountSettings';
 
 // Error pages
 import NotFoundPage from '@/pages/NotFound';
@@ -26,7 +25,6 @@ const routes: RouteObject[] = [
     children: [
       { path: '', element: <ApplicationsPage /> },
       { path: 'view/:id', element: <ViewApplicationsPage /> },
-      { path: 'account-settings', element: <AccountSettingsPage /> },
     ],
   },
 
